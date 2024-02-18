@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:wecare/screens/signin.dart';
+import 'package:wecare/screens/signup.dart';
 import 'package:wecare/widgets/custome_scaffold.dart';
 import 'package:wecare/widgets/welcome_button.dart';
 
@@ -53,12 +55,18 @@ class WelcomeScreen extends StatelessWidget {
                   
                   child: WelcomeButton( 
                     buttonText: 'Sign In',
+                    onTap: SignInScreen(
+ 
+                    ),
                   ), ),
             
                   Expanded(
                   
                   child: WelcomeButton(
                     buttonText: 'Sign up',
+                    onTap: SignUpScreen(
+                      
+                    ),
                   ), ),
               ],
             ),
