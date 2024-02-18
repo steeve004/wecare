@@ -45,16 +45,23 @@ class WelcomeScreen extends StatelessWidget {
           ),
          const Flexible(
           flex: 1,
-          child: Row(
-            children: [
-              Expanded(
-                
-                child: WelcomeButton(), ),
-
+          child: Align(
+            alignment: Alignment.bottomRight,
+            child: Row(
+              children: [
                 Expanded(
-                
-                child: WelcomeButton(), ),
-            ],
+                  
+                  child: WelcomeButton( 
+                    buttonText: 'Sign In',
+                  ), ),
+            
+                  Expanded(
+                  
+                  child: WelcomeButton(
+                    buttonText: 'Sign up',
+                  ), ),
+              ],
+            ),
           )
           ),
         ],
