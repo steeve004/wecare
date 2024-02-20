@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:wecare/screens/signin.dart';
 import 'package:wecare/widgets/custome_scaffold.dart';
+import 'package:http/http.dart' as http;
+
+Future<void> signUp(String fullname, String email, String password) async {
+  final url = Uri.parse('http://127.0.0.1:8000/signup');
+  final response = await http.post(url, body: {'fullname':fullname, 'email': email, 'password': password});
+  
+  if (response.statusCode == 201) {
+    print('User signed up successfully');
+  } else {
+    print('Failed to sign up: ${response.body}');
+  }
+}
+
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
