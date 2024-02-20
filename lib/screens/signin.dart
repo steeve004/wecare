@@ -218,7 +218,7 @@ class _SignInScreenState extends State<SignInScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text('Dont have an account? ',
+                          const Text('Dont have an account yet? ',
                             style: TextStyle(
                               color: Colors.black45,
                             ),

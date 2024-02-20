@@ -2,6 +2,26 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:wecare/screens/signin.dart';
 import 'package:wecare/widgets/custome_scaffold.dart';
+import 'package:http/http.dart' as http;
+
+Future<void> signUp(String fullname, String email, String password) async {
+  final url = Uri.parse('http://127.0.0.1:8000/signup');
+  final response = await http.post(url, body: {
+    'fullname': fullname,
+    'email': email,
+    'password': password,
+  });
+
+  if (response.statusCode == 201) {
+    // If the server returns a 201 CREATED response,
+    // it means the user signed up successfully.
+    print('User signed up successfully');
+    // You can navigate to another screen or show a success message here.
+  } else {
+    // If the server returns an error response, throw an exception.
+    throw Exception('Failed to sign up: ${response.body}');
+  }
+}
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -80,7 +100,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         controller: _fullNameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter Full name';
+                            return 'Please enter Fullname';
                           }
                           return null;
                         },
