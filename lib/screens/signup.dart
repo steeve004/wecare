@@ -2,19 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:wecare/screens/signin.dart';
 import 'package:wecare/widgets/custome_scaffold.dart';
-import 'package:http/http.dart' as http;
-
-Future<void> signUp(String fullname, String email, String password) async {
-  final url = Uri.parse('http://127.0.0.1:8000/signup');
-  final response = await http.post(url, body: {'fullname':fullname, 'email': email, 'password': password});
-  
-  if (response.statusCode == 201) {
-    print('User signed up successfully');
-  } else {
-    print('Failed to sign up: ${response.body}');
-  }
-}
-
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -25,7 +12,28 @@ class SignUpScreen extends StatefulWidget {
 
 class _SignUpScreenState extends State<SignUpScreen> {
   final _formSignupKey = GlobalKey<FormState>();
-  bool agreePersonalData = true;
+  bool agreePersonalData = false;
+
+  late TextEditingController _fullNameController;
+  late TextEditingController _emailController;
+  late TextEditingController _passwordController;
+
+  @override
+  void initState() {
+    super.initState();
+    _fullNameController = TextEditingController();
+    _emailController = TextEditingController();
+    _passwordController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _fullNameController.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return CustomScaffold(
@@ -69,6 +77,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // full name
                       TextFormField(
+                        controller: _fullNameController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Full name';
@@ -100,6 +109,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // email
                       TextFormField(
+                        controller: _emailController,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter Email';
@@ -131,6 +141,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // password
                       TextFormField(
+                        controller: _passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
                         validator: (value) {
@@ -194,30 +205,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // signup button
                       SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            if (_formSignupKey.currentState!.validate() &&
-                                agreePersonalData) {
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () async {
+                          if (_formSignupKey.currentState!.validate() &&
+                              agreePersonalData) {
+                            try {
+                              await signUp(
+                                _fullNameController.text,
+                                _emailController.text,
+                                _passwordController.text,
+                              );
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Processing Data'),
+                                  content: Text('Sign Up Successful'),
                                 ),
                               );
-                            } else if (!agreePersonalData) {
+                            } catch (e) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                    content: Text(
-                                        'Please agree to the processing of personal data')),
+                                SnackBar(
+                                  content: Text('Failed to sign up: $e'),
+                                ),
                               );
                             }
-                          },
-                          child: const Text('Sign up'),
-                        ),
+                          } else if (!agreePersonalData) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text(
+                                  'Please agree to the processing of personal data',
+                                ),
+                              ),
+                            );
+                          }
+                        },
+                        child: const Text('Sign up'),
                       ),
-                      const SizedBox(
-                        height: 30.0,
-                      ),
+                    ),
+                    const SizedBox(height: 20.0),
                       // sign up divider
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
