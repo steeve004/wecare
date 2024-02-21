@@ -5,8 +5,28 @@ import 'package:wecare/widgets/custome_scaffold.dart';
 import 'package:http/http.dart' as http;
 
 Future<void> signUp(String fullname, String email, String password) async {
-  final url = Uri.parse('http://127.0.0.1:8000/signup');
-  final response = await http.post(url, body: {
+  final url = Uri.parse('https://127.0.0.1:8000/signup');
+  try {
+    final response = await http.post(
+      url,
+      body: {
+        'fullname': fullname,
+        'email': email,
+        'password': password,
+      },
+    );
+    
+    if (response.statusCode == 201) {
+      print('User signed up successfully');
+    } else {
+      throw Exception('Failed to sign up: ${response.body}');
+    }
+  } catch (e) {
+    print('Error signing up: $e');
+    throw Exception('Failed to sign up: $e');
+  }
+}
+  /* final response = await http.post(url, body: {
     'fullname': fullname,
     'email': email,
     'password': password,
@@ -20,11 +40,11 @@ Future<void> signUp(String fullname, String email, String password) async {
   } else {
     // If the server returns an error response, throw an exception.
     throw Exception('Failed to sign up: ${response.body}');
-  }
-}
+  } */
+
 
 class SignUpScreen extends StatefulWidget {
-  const SignUpScreen({super.key});
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
   State<SignUpScreen> createState() => _SignUpScreenState();
