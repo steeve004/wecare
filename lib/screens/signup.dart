@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:wecare/screens/signin.dart';
 import 'package:wecare/widgets/custome_scaffold.dart';
+//import 'package:http/http.dart' as http;
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -207,9 +208,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () async {
-                            if (_formSignupKey.currentState!.validate() &&
-                                agreePersonalData) {
+                          onPressed: () {
+                            if (_formSignupKey.currentState!.validate() && agreePersonalData) {
+                              // Perform signup action
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Sign Up Successful'),

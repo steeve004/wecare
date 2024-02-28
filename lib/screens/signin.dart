@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:wecare/screens/signup.dart';
+import 'package:wecare/screens/addpatient.dart';
 import 'package:wecare/widgets/custome_scaffold.dart';
 
 class SignInScreen extends StatefulWidget {
@@ -154,6 +155,10 @@ class _SignInScreenState extends State<SignInScreen> {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
                                   content: Text('Processing Data'),
+                                ),
+                              );
+                              Navigator.push(context,
+                                MaterialPageRoute(builder: (e)=> const AddPatientScreen(),
                                 ),
                               );
                             } else if (!rememberPassword){
