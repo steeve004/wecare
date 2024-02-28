@@ -69,9 +69,16 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Add Patient'),
+        title: const Text(
+          'Add Patient',
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Color.fromARGB(255, 34, 95, 11),
+          ),
+        ),
         leading:  Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(8.0),
           child: SizedBox(
             width: 1000,
             height: 1000,
@@ -81,7 +88,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
       ),
       body: Center(
         child: Container(
-          color: const Color.fromARGB(255, 207, 223, 213),
+          decoration: const BoxDecoration(
+            image: DecorationImage(
+              image: AssetImage('assets/images/bck5.png'),
+              fit: BoxFit.cover,
+            ),
+          ),
           padding: const EdgeInsets.fromLTRB(16.0, 32.0, 16.0, 16.0),
           child: Form(
             key: _formKey,
