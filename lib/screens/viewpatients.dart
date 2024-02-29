@@ -18,7 +18,7 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
 
   // Function to fetch patients from the server
   Future<void> fetchPatients() async {
-    final response = await http.get(Uri.parse('https://wecare-p8lx.onrender.com/addPatient'));
+    final response = await http.get(Uri.parse('https://wecare-p8lx.onrender.com/patients'));
     if (response.statusCode == 200) {
       setState(() {
         patients = json.decode(response.body); // Decode JSON response
