@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'viewpatients.dart'; // Importing the ViewPatientsScreen
+import 'addtest.dart';
+import 'viewalltest.dart';
 
 class AddPatientScreen extends StatefulWidget {
   const AddPatientScreen({Key? key}) : super(key: key);
@@ -94,14 +96,16 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                 // Navigate to view patients screen
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => ViewPatientsScreen()),
+                  MaterialPageRoute(builder: (context) => const ViewPatientsScreen()),
                 );
               } else if (value == 'addTest') {
                 // Navigate to add test screen
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => AddTestScreen()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddTestsScreen()));
               } else if (value == 'viewAllTests') {
                 // Navigate to view all tests screen
-                // Navigator.push(context, MaterialPageRoute(builder: (context) => ViewAllTestsScreen()));
+               Navigator.push(context, MaterialPageRoute(builder: (context) => ViewAllTestsScreen()));
+              }else if (value == 'logOut') {
+                //navigate to logout
               }
             },
             itemBuilder: (BuildContext context) => [
@@ -116,6 +120,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
               const PopupMenuItem<String>(
                 value: 'viewAllTests',
                 child: Text('View All Tests'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'logOut',
+                child: Text('Logout'),
               ),
             ],
           ),
