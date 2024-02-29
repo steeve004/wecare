@@ -8,6 +8,12 @@ const app = express();
 // Middleware
 app.use(bodyParser.json());
 
+// Log middleware
+app.use((req, res, next) => {
+  console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+  next();
+});
+
 // MongoDB connection
 mongoose.connect('mongodb+srv://Steeve:1234@cluster2.ql5jvik.mongodb.net/', 
 { useNewUrlParser: true, useUnifiedTopology: true })
