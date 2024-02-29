@@ -11,18 +11,19 @@ class WelcomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return CustomScaffold(
       child: Column(
-         mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Flexible(
             flex: 8,
             child: Container(
-               padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
               child: Center(
                 child: RichText(
                   textAlign: TextAlign.center,
                   text: const TextSpan(
                     style: TextStyle(
-                      color: Color.fromARGB(255, 12, 106, 66), // Change text color to black
+                      color: Color.fromARGB(
+                          255, 12, 106, 66), // Change text color to black
                     ),
                     children: [
                       TextSpan(
@@ -45,33 +46,31 @@ class WelcomeScreen extends StatelessWidget {
               ),
             ),
           ),
-         const Flexible(
-          flex: 1,
-          child: Align(
-            alignment: Alignment.bottomRight,
-            child: Row(
-              children: [
-                Expanded(
-                  
-                  child: WelcomeButton( 
-                    buttonText: 'Sign In',
-                    onTap: SignInScreen(),
-                    color: Colors.transparent,
-                    textColor: Colors.white,
-                  ), ),
-            
-                  Expanded(
-                  
-                  child: WelcomeButton(
-                    buttonText: 'Sign up',
-                    onTap: SignUpScreen(),
-                    color: Colors.white,
-                    textColor: Colors.green,
-                  ), ),
-              ],
-            ),
-          )
-          ),
+          const Flexible(
+              flex: 1,
+              child: Align(
+                alignment: Alignment.bottomRight,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: WelcomeButton(
+                        buttonText: 'Sign In',
+                        onTap: SignInScreen(),
+                        color: Colors.transparent,
+                        textColor: Colors.white,
+                      ),
+                    ),
+                    Expanded(
+                      child: WelcomeButton(
+                        buttonText: 'Sign up',
+                        onTap: SignUpScreen(),
+                        color: Colors.white,
+                        textColor: Colors.green,
+                      ),
+                    ),
+                  ],
+                ),
+              )),
         ],
       ),
     );

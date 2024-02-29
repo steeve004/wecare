@@ -15,7 +15,7 @@ Future<void> signUp(String fullname, String email, String password) async {
         'password': password,
       },
     );
-    
+
     if (response.statusCode == 201) {
       print('User signed up successfully');
     } else {
@@ -26,7 +26,7 @@ Future<void> signUp(String fullname, String email, String password) async {
     throw Exception('Failed to sign up: $e');
   }
 }
-  /* final response = await http.post(url, body: {
+/* final response = await http.post(url, body: {
     'fullname': fullname,
     'email': email,
     'password': password,
@@ -41,7 +41,6 @@ Future<void> signUp(String fullname, String email, String password) async {
     // If the server returns an error response, throw an exception.
     throw Exception('Failed to sign up: ${response.body}');
   } */
-
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -245,43 +244,43 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       // signup button
                       SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () async {
-                          if (_formSignupKey.currentState!.validate() &&
-                              agreePersonalData) {
-                            try {
-                              await signUp(
-                                _fullNameController.text,
-                                _emailController.text,
-                                _passwordController.text,
-                              );
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (_formSignupKey.currentState!.validate() &&
+                                agreePersonalData) {
+                              try {
+                                await signUp(
+                                  _fullNameController.text,
+                                  _emailController.text,
+                                  _passwordController.text,
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Sign Up Successful'),
+                                  ),
+                                );
+                              } catch (e) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('Failed to sign up: $e'),
+                                  ),
+                                );
+                              }
+                            } else if (!agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
-                                  content: Text('Sign Up Successful'),
-                                ),
-                              );
-                            } catch (e) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text('Failed to sign up: $e'),
+                                  content: Text(
+                                    'Please agree to the processing of personal data',
+                                  ),
                                 ),
                               );
                             }
-                          } else if (!agreePersonalData) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Please agree to the processing of personal data',
-                                ),
-                              ),
-                            );
-                          }
-                        },
-                        child: const Text('Sign up'),
+                          },
+                          child: const Text('Sign up'),
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 20.0),
+                      const SizedBox(height: 20.0),
                       // sign up divider
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
