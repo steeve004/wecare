@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'viewpatients.dart'; // Importing the ViewPatientsScreen
 
 class AddPatientScreen extends StatefulWidget {
   const AddPatientScreen({Key? key}) : super(key: key);
@@ -77,7 +78,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             color: Color.fromARGB(255, 34, 95, 11),
           ),
         ),
-        leading:  Padding(
+        leading: Padding(
           padding: const EdgeInsets.all(8.0),
           child: SizedBox(
             width: 1000,
@@ -85,6 +86,40 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
             child: Image.asset('assets/images/bck3.png'),
           ),
         ),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              // Handle menu item selection
+              if (value == 'viewPatients') {
+                // Navigate to view patients screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => ViewPatientsScreen()),
+                );
+              } else if (value == 'addTest') {
+                // Navigate to add test screen
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => AddTestScreen()));
+              } else if (value == 'viewAllTests') {
+                // Navigate to view all tests screen
+                // Navigator.push(context, MaterialPageRoute(builder: (context) => ViewAllTestsScreen()));
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem<String>(
+                value: 'viewPatients',
+                child: Text('View Patients'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'addTest',
+                child: Text('Add Test'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'viewAllTests',
+                child: Text('View All Tests'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Center(
         child: Container(
