@@ -48,6 +48,20 @@ app.post('/addPatient', async (req, res) => {
   }
 });
 
+// Endpoint to get patient details
+app.get('/patients', async (req, res) => {
+  try {
+    // Fetch all patient records from the database
+    const patients = await Patient.find();
+    
+    res.status(200).json(patients);
+  } catch (error) {
+    console.error('Error fetching patient details:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 // Start the server connection
 const PORT = process.env.PORT || 8000;
 app.listen(PORT, () => {
