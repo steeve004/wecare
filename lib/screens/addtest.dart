@@ -123,7 +123,7 @@ class _AddTestsScreenState extends State<AddTestsScreen> {
                   }
                 },
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(Color.fromARGB(255, 84, 117, 84)), // Green button
+                  backgroundColor: MaterialStateProperty.all<Color>(const Color.fromARGB(255, 84, 117, 84)), // Green button
                 ),
                 child: const Text(
                   'Submit',

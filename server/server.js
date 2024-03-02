@@ -67,6 +67,22 @@ app.get('/patients', async (req, res) => {
   }
 });
 
+// Endpoint to delete a patient record by ID
+app.delete('/patients/:id', async (req, res) => {
+  try {
+    const patientId = req.params.id;
+
+    // Find the patient by ID and delete it from the database
+    await Patient.findByIdAndDelete(patientId);
+
+    res.status(200).json({ message: 'Patient record deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting patient record:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
 
 // Start the server connection
 const PORT = process.env.PORT || 8000;

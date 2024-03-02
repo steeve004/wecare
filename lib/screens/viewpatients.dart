@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'addtest.dart';
-import 'viewalltest.dart';
-
-import 'package:wecare/screens/addpatient.dart';
 
 class ViewPatientsScreen extends StatefulWidget {
-  const ViewPatientsScreen({super.key});
+  const ViewPatientsScreen({Key? key}) : super(key: key);
 
   @override
   _ViewPatientsScreenState createState() => _ViewPatientsScreenState();
@@ -34,6 +30,28 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
     }
   }
 
+  // Function to delete a patient
+  Future<void> deletePatient(String id) async {
+    final response = await http.delete(
+      Uri.parse('https://wecare-p8lx.onrender.com/patients/$id'),
+    );
+    if (response.statusCode == 200) {
+      // Patient deleted successfully
+      // Remove the deleted patient from the local list
+      setState(() {
+        patients.removeWhere((patient) => patient['_id'] == id);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Patient deleted successfully')),
+      );
+    } else {
+      // Failed to delete patient
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to delete patient')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -46,49 +64,8 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
             color: Color.fromARGB(255, 34, 95, 11),
           ),
         ),
-
-         actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              // Handle menu item selection
-              if (value == 'addPatient') {
-                // Navigate to view patients screen
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AddPatientScreen()),
-                );
-              } else if (value == 'addTest') {
-                // Navigate to add test screen
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddTestsScreen()));
-              } else if (value == 'viewAllTests') {
-                // Navigate to view all tests screen
-                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ViewAllTestsScreen()));
-              }
-            },
-            itemBuilder: (BuildContext context) => [
-              const PopupMenuItem<String>(
-                value: 'addPatient',
-                child: Text('Add Patient'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'addTest',
-                child: Text('Add Test'),
-              ),
-              const PopupMenuItem<String>(
-                value: 'viewAllTests',
-                child: Text('View All Tests'),
-              ),
-            ],
-          ),
-        ],
       ),
       body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/bck5.png"), // Change the path to your image asset
-            fit: BoxFit.cover,
-          ),
-        ),
         child: patients.isEmpty
             ? const Center(
                 child: CircularProgressIndicator(),
@@ -99,6 +76,9 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
                   final patient = patients[index];
                   return AnimatedPatientCard(
                     patient: patient,
+                    onDelete: (id) {
+                      deletePatient(id);
+                    },
                   );
                 },
               ),
@@ -109,8 +89,9 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
 
 class AnimatedPatientCard extends StatefulWidget {
   final dynamic patient;
+  final Function(String) onDelete;
 
-  AnimatedPatientCard({required this.patient});
+  AnimatedPatientCard({required this.patient, required this.onDelete});
 
   @override
   _AnimatedPatientCardState createState() => _AnimatedPatientCardState();
@@ -192,7 +173,8 @@ class _AnimatedPatientCardState extends State<AnimatedPatientCard> with SingleTi
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.white),
                       onPressed: () {
-                        // Implement delete functionality
+                        // Call the onDelete callback function
+                        widget.onDelete(widget.patient['_id']);
                       },
                     ),
                   ],
