@@ -41,19 +41,19 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
       children: [
         TextField(
           controller: _nameController,
-          decoration: InputDecoration(labelText: 'Name'),
+          decoration: const InputDecoration(labelText: 'Name'),
         ),
         TextField(
           controller: _ageController,
-          decoration: InputDecoration(labelText: 'Age'),
+          decoration: const InputDecoration(labelText: 'Age'),
         ),
         TextField(
           controller: _genderController,
-          decoration: InputDecoration(labelText: 'Gender'),
+          decoration: const InputDecoration(labelText: 'Gender'),
         ),
         TextField(
           controller: _diagnosisController,
-          decoration: InputDecoration(labelText: 'Diagnosis'),
+          decoration: const InputDecoration(labelText: 'Diagnosis'),
         ),
         ElevatedButton(
           onPressed: () {
@@ -66,7 +66,7 @@ class _EditPatientScreenState extends State<EditPatientScreen> {
             widget.onUpdate(updatedPatient);
             Navigator.pop(context); // Return to previous screen
           },
-          child: Text('Save'),
+          child: const Text('Save'),
         ),
       ],
     );

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:wecare/screens/addpatient.dart';
 import 'dart:convert';
 import 'EditPatientScreen.dart';
+import 'addtest.dart';
+import 'viewalltest.dart';
 
 class ViewPatientsScreen extends StatefulWidget {
   const ViewPatientsScreen({Key? key}) : super(key: key);
@@ -86,6 +89,46 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
             color: Color.fromARGB(255, 10, 11, 9),
           ),
         ),
+        actions: [
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              // Handle menu item selection
+              if (value == 'viewPatients') {
+                // Navigate to view patients screen
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddPatientScreen()),
+                );
+              } else if (value == 'addTest') {
+                // Navigate to add test screen
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AddTestsScreen()));
+              } else if (value == 'viewAllTests') {
+                // Navigate to view all tests screen
+               Navigator.push(context, MaterialPageRoute(builder: (context) => const ViewAllTestsScreen()));
+              }else if (value == 'logOut') {
+                //navigate to logout
+              }
+            },
+            itemBuilder: (BuildContext context) => [
+              const PopupMenuItem<String>(
+                value: 'viewPatients',
+                child: Text('Add Patients'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'addTest',
+                child: Text('Add Test'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'viewAllTests',
+                child: Text('View All Tests'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'logOut',
+                child: Text('Logout'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Container(
         decoration: const BoxDecoration(
@@ -190,20 +233,39 @@ class _AnimatedPatientCardState extends State<AnimatedPatientCard> with SingleTi
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
+                      icon: const Icon(Icons.note, color: Colors.white),
+                      onPressed: () {
+                       
+                      },
+                    ),
+                    IconButton(
                       icon: const Icon(Icons.edit, color: Colors.white),
                       onPressed: () {
-                        showDialog(
-                          context: context,
-                          builder: (BuildContext context) {
-                            return AlertDialog(
-                              title: Text('Edit Patient'),
-                              content: EditPatientScreen(
-                                patient: widget.patient,
-                                onUpdate: widget.onUpdate,
-                              ),
-                            );
-                          },
-                        );
+                       showDialog(
+  context: context,
+  builder: (BuildContext context) {
+    return AlertDialog(
+      backgroundColor: Colors.white, // Set background color to white
+      title: Text('Edit WeCare Patient'),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            child: EditPatientScreen(
+              patient: widget.patient,
+              onUpdate: widget.onUpdate,
+            ),
+          ),
+          SizedBox(height: 80), // Add some space between the content and the logo
+          Image.asset('assets/images/bck3.png', // Provide the path to your logo image asset
+            height: 100, // Adjust the height as needed
+          ),
+        ],
+      ),
+    );
+  },
+);
+
                       },
                     ),
                     IconButton(
