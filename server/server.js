@@ -82,6 +82,30 @@ app.delete('/patients/:id', async (req, res) => {
   }
 });
 
+// Endpoint to update patient record
+app.put('/patients/:id', async (req, res) => {
+  try {
+    // Extract patient ID from request parameters
+    const patientId = req.params.id;
+
+    // Updated patient data from request body
+    const updatedPatientData = req.body;
+
+    // Update patient record in the database
+    await db.collection('patients').updateOne(
+      { _id: ObjectId(patientId) }, // Find patient by ID
+      { $set: updatedPatientData } // Update patient data
+    );
+
+    client.close();
+
+    res.status(200).send('Patient record updated successfully');
+  } catch (error) {
+    console.error('Error updating patient record:', error);
+    res.status(500).send('Failed to update patient record');
+  }
+});
+
 
 
 // Start the server connection

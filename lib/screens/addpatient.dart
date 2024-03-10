@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'viewpatients.dart'; // Importing the ViewPatientsScreen
+import 'viewpatients.dart';
 import 'addtest.dart';
 import 'viewalltest.dart';
 
@@ -103,7 +103,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AddTestsScreen()));
               } else if (value == 'viewAllTests') {
                 // Navigate to view all tests screen
-               Navigator.push(context, MaterialPageRoute(builder: (context) => ViewAllTestsScreen()));
+               Navigator.push(context, MaterialPageRoute(builder: (context) => const ViewAllTestsScreen()));
               }else if (value == 'logOut') {
                 //navigate to logout
               }

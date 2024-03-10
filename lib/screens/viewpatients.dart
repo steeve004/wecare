@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'EditPatientScreen.dart';
 
 class ViewPatientsScreen extends StatefulWidget {
   const ViewPatientsScreen({Key? key}) : super(key: key);
@@ -36,8 +37,6 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
       Uri.parse('https://wecare-p8lx.onrender.com/patients/$id'),
     );
     if (response.statusCode == 200) {
-      // Patient deleted successfully
-      // Remove the deleted patient from the local list
       setState(() {
         patients.removeWhere((patient) => patient['_id'] == id);
       });
@@ -45,9 +44,32 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
         const SnackBar(content: Text('Patient deleted successfully')),
       );
     } else {
-      // Failed to delete patient
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Failed to delete patient')),
+      );
+    }
+  }
+
+  // Function to update patient details
+  Future<void> updatePatient(String id, dynamic updatedPatient) async {
+    final response = await http.put(
+      Uri.parse('https://wecare-p8lx.onrender.com/patients/$id'),
+      body: json.encode(updatedPatient),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (response.statusCode == 200) {
+      int index = patients.indexWhere((patient) => patient['_id'] == id);
+      if (index != -1) {
+        setState(() {
+          patients[index] = updatedPatient;
+        });
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Patient details updated successfully')),
+        );
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to update patient details')),
       );
     }
   }
@@ -61,11 +83,17 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
-            color: Color.fromARGB(255, 34, 95, 11),
+            color: Color.fromARGB(255, 10, 11, 9),
           ),
         ),
       ),
       body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/images/bck5.png"), // Use your image asset here
+            fit: BoxFit.cover,
+          ),
+        ),
         child: patients.isEmpty
             ? const Center(
                 child: CircularProgressIndicator(),
@@ -79,6 +107,9 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
                     onDelete: (id) {
                       deletePatient(id);
                     },
+                    onUpdate: (updatedPatient) {
+                      updatePatient(patient['_id'], updatedPatient);
+                    },
                   );
                 },
               ),
@@ -90,8 +121,9 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
 class AnimatedPatientCard extends StatefulWidget {
   final dynamic patient;
   final Function(String) onDelete;
+  final Function(dynamic) onUpdate;
 
-  AnimatedPatientCard({required this.patient, required this.onDelete});
+  AnimatedPatientCard({required this.patient, required this.onDelete, required this.onUpdate});
 
   @override
   _AnimatedPatientCardState createState() => _AnimatedPatientCardState();
@@ -149,31 +181,34 @@ class _AnimatedPatientCardState extends State<AnimatedPatientCard> with SingleTi
                       style: const TextStyle(color: Colors.white), // White text color
                     ),
                     Text(
-                      "diagnosis: ${widget.patient['diagnosis']}",
+                      "Diagnosis: ${widget.patient['diagnosis']}",
                       style: const TextStyle(color: Colors.white), // White text color
                     ),
-                    // Add more details as needed
                   ],
                 ),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.nordic_walking, color: Colors.white),
-                      onPressed: () {
-                        // Implement tests functionality
-                      },
-                    ),
-                    IconButton(
                       icon: const Icon(Icons.edit, color: Colors.white),
                       onPressed: () {
-                        // Implement update functionality
+                        showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              title: Text('Edit Patient'),
+                              content: EditPatientScreen(
+                                patient: widget.patient,
+                                onUpdate: widget.onUpdate,
+                              ),
+                            );
+                          },
+                        );
                       },
                     ),
                     IconButton(
                       icon: const Icon(Icons.delete, color: Colors.white),
                       onPressed: () {
-                        // Call the onDelete callback function
                         widget.onDelete(widget.patient['_id']);
                       },
                     ),
