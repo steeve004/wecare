@@ -71,21 +71,35 @@ class _AddTestsScreenState extends State<AddTestsScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-              DropdownButton<String>(
+             DropdownButton<String>(
                 value: selectedPatient,
-                hint: const Text('Select a patient'),
-                onChanged: (String? value) { // Adjusted signature
+                hint: const Row(
+                  children: [
+                    Icon(Icons.person), // Add an icon to represent the patient
+                    SizedBox(width: 8), // Add some spacing between the icon and text
+                    Text('Select a patient'),
+                  ],
+                ),
+                onChanged: (String? value) {
                   setState(() {
                     selectedPatient = value;
                   });
                 },
-                items: patientNames.map((String value) {
+                dropdownColor: Colors.white, // Set the dropdown background color to white
+                items: patientNames.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
-                    child: Text(value),
+                    child: Row(
+                      children: [
+                        Icon(Icons.person), // Add an icon to represent the patient
+                        const SizedBox(width: 8), // Add some spacing between the icon and text
+                        Text(value),
+                      ],
+                    ),
                   );
                 }).toList(),
               ),
+
               const SizedBox(height: 20),
               TextField(
                 controller: diastolicController,

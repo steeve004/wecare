@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'EditPatientScreen.dart';
 import 'addtest.dart';
 import 'viewalltest.dart';
+import 'AddTestRecordDialog.dart';
 
 class ViewPatientsScreen extends StatefulWidget {
   const ViewPatientsScreen({Key? key}) : super(key: key);
@@ -233,54 +234,58 @@ class _AnimatedPatientCardState extends State<AnimatedPatientCard> with SingleTi
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.note, color: Colors.white),
-                      onPressed: () {
-                       
-                      },
-                    ),
+                    icon: const Icon(Icons.note, color: Colors.white),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AddTestRecordDialog(patientId: widget.patient['_id']);
+                        },
+                      );
+                    },
+                  ),
                     IconButton(
                       icon: const Icon(Icons.edit, color: Colors.white),
                       onPressed: () {
                        showDialog(
-  context: context,
-  builder: (BuildContext context) {
-    return AlertDialog(
-      backgroundColor: Colors.white, // Set background color to white
-      title: Text('Edit WeCare Patient'),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Expanded(
-            child: EditPatientScreen(
-              patient: widget.patient,
-              onUpdate: widget.onUpdate,
-            ),
-          ),
-          SizedBox(height: 80), // Add some space between the content and the logo
-          Image.asset('assets/images/bck3.png', // Provide the path to your logo image asset
-            height: 100, // Adjust the height as needed
-          ),
-        ],
-      ),
-    );
-  },
-);
-
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor: Colors.white, // Set background color to white
+                            title: const Text('Edit WeCare Patient'),
+                            content: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Expanded(
+                                  child: EditPatientScreen(
+                                    patient: widget.patient,
+                                    onUpdate: widget.onUpdate,
+                                  ),
+                                ),
+                                const SizedBox(height: 80), // Add some space between the content and the logo
+                                Image.asset('assets/images/bck3.png', // Provide the path to your logo image asset
+                                  height: 150, // Adjust the height as needed
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                      );
                       },
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.delete, color: Colors.white),
-                      onPressed: () {
-                        widget.onDelete(widget.patient['_id']);
-                      },
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
-}
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.delete, color: Colors.white),
+                        onPressed: () {
+                          widget.onDelete(widget.patient['_id']);
+                        },
+                            ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
+                          );
+                        }
+                      }
