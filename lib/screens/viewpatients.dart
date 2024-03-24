@@ -36,7 +36,35 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
   }
 
   // Function to delete a patient
-  Future<void> deletePatient(String id) async {
+Future<void> deletePatient(String id) async {
+  // Show confirmation dialog
+  bool confirmDelete = await showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        backgroundColor: Colors.white, // Set background color to white
+        title: Text('Confirm Deletion', style: TextStyle(color: Colors.black)), // Title text color
+        content: Text('Are you sure you want to delete this patient?', style: TextStyle(color: Colors.black)), // Content text color
+        actions: <Widget>[
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(false); // Return false if user cancels
+            },
+            child: Text('Cancel', style: TextStyle(color: Colors.blue)), // Cancel button text color
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(true); // Return true if user confirms
+            },
+            child: Text('Delete', style: TextStyle(color: Colors.red)), // Delete button text color
+          ),
+        ],
+      );
+    },
+  );
+
+  // If user confirms deletion, proceed with deletion
+  if (confirmDelete == true) {
     final response = await http.delete(
       Uri.parse('https://wecare-p8lx.onrender.com/patients/$id'),
     );
@@ -53,6 +81,9 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
       );
     }
   }
+}
+
+
 
   // Function to update patient details
   Future<void> updatePatient(String id, dynamic updatedPatient) async {

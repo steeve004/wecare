@@ -105,6 +105,55 @@ app.put('/patients/:id', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+// Define MongoDB Schema for patient test records
+const patientTestSchema = new mongoose.Schema({
+  patientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' }, // Reference to Patient model
+  diastolicReadings: Number,
+  systolicReadings: Number,
+  symptoms: String
+});
+
+// Define MongoDB Model for patient test records
+const PatientTest = mongoose.model('PatientTest', patientTestSchema);
+
+// Endpoint to add patient test record
+app.post('/addPatientTest/:patientId', async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    const { testDiastolic, testSystolic, testSymptoms } = req.body;
+
+    // Create a new patient test document
+    const newPatientTest = new PatientTest({
+      patientId,
+      diastolicReadings: testDiastolic,
+      systolicReadings: testSystolic,
+      symptoms: testSymptoms
+    });
+
+    // Save patient test record to the database
+    await newPatientTest.save();
+
+    res.status(201).json({ message: 'Patient test record added successfully' });
+  } catch (error) {
+    console.error('Error adding patient test record:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Endpoint to get patient test records by patient ID
+app.get('/patientTests/:patientId', async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+
+    // Fetch all patient test records for a specific patient from the database
+    const patientTests = await PatientTest.find({ patientId }) .populate('patientId', 'name');
+
+    res.status(200).json(patientTests);
+  } catch (error) {
+    console.error('Error fetching patient test records:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 
