@@ -122,9 +122,17 @@ app.post('/addPatientTest/:patientId', async (req, res) => {
     const patientId = req.params.patientId;
     const { testDiastolic, testSystolic, testSymptoms } = req.body;
 
+    // Fetch patient details by ID to get the name
+    const patient = await Patient.findById(patientId);
+
+    if (!patient) {
+      return res.status(404).json({ error: 'Patient not found' });
+    }
+
     // Create a new patient test document
     const newPatientTest = new PatientTest({
       patientId,
+      patientName: patient.name, // Include patient's name
       diastolicReadings: testDiastolic,
       systolicReadings: testSystolic,
       symptoms: testSymptoms
@@ -139,6 +147,7 @@ app.post('/addPatientTest/:patientId', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 // Endpoint to get patient test records by patient ID
 app.get('/patientTests/:patientId', async (req, res) => {

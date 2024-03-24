@@ -23,45 +23,44 @@ class _AddTestRecordDialogState extends State<AddTestRecordDialog> {
   String testSystolic = testSystolicController.text;
   String testSymptoms = testSymptomsController.text;
 
-  // Send data to the server to add the test record
   try {
-    final testResponse = await http.post(
-      Uri.parse('https//wecare-p8lx.onrender.com/addPatientTest/${widget.patientId}'),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode({
-        'patientId': widget.patientId,
-        'testDiastolic': testDiastolic,
-        'testSystolic': testSystolic,
-        'testSymptoms': testSymptoms,
-      }),
+    // Fetch patient information
+    final patientResponse = await http.get(
+      Uri.parse('https://wecare-p8lx.onrender.com/patient/${widget.patientId}'),
     );
 
-    if (testResponse.statusCode == 201) {
-      // If the test record was added successfully, fetch the patient's name
-      final patientResponse = await http.get(
-        Uri.parse('https//wecare-p8lx.onrender.com/patient/${widget.patientId}'),
+    if (patientResponse.statusCode == 200) {
+      Map<String, dynamic> patientData = jsonDecode(patientResponse.body);
+      String patientName = patientData['name'];
+
+      // Send data to the server to add the test record
+      final testResponse = await http.post(
+        Uri.parse('https://wecare-p8lx.onrender.com/addPatientTest/${widget.patientId}'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'patientId': widget.patientId,
+          'patientName': patientName, // Include patient's name
+          'testDiastolic': testDiastolic,
+          'testSystolic': testSystolic,
+          'testSymptoms': testSymptoms,
+        }),
       );
 
-      if (patientResponse.statusCode == 200) {
-        // Parse the response body
-        Map<String, dynamic> patientData = jsonDecode(patientResponse.body);
-        String patientName = patientData['name'];
-
-        // Show success message with patient's name
+      if (testResponse.statusCode == 201) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Test record added successfully for patient: $patientName')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to fetch patient information')),
+          const SnackBar(content: Text('Failed to add test record')),
         );
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to add test record')),
+        const SnackBar(content: Text('Failed to fetch patient information')),
       );
     }
   } catch (e) {
@@ -71,6 +70,7 @@ class _AddTestRecordDialogState extends State<AddTestRecordDialog> {
     );
   }
 }
+
 
 
 
