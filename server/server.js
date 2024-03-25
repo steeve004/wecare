@@ -108,6 +108,7 @@ app.put('/patients/:id', async (req, res) => {
 // Define MongoDB Schema for patient test records
 const patientTestSchema = new mongoose.Schema({
   patientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Patient' }, // Reference to Patient model
+  patientName: String,
   diastolicReadings: Number,
   systolicReadings: Number,
   symptoms: String

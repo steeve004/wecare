@@ -23,55 +23,65 @@ class _AddTestRecordDialogState extends State<AddTestRecordDialog> {
   String testSystolic = testSystolicController.text;
   String testSymptoms = testSymptomsController.text;
 
+  // Send request to fetch patient details by ID
   try {
-    // Fetch patient information
     final patientResponse = await http.get(
-      Uri.parse('https://wecare-p8lx.onrender.com/patient/${widget.patientId}'),
+      Uri.parse('https://wecare-p8lx.onrender.com/patients/${widget.patientId}'),
+      // Add any required headers here
     );
 
     if (patientResponse.statusCode == 200) {
+      // Parse the response body to extract patient name
       Map<String, dynamic> patientData = jsonDecode(patientResponse.body);
-      String patientName = patientData['name'];
+      String patientName = patientData['name']; // Assuming 'name' is the key for patient's name
 
       // Send data to the server to add the test record
-      final testResponse = await http.post(
-        Uri.parse('https://wecare-p8lx.onrender.com/addPatientTest/${widget.patientId}'),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode({
-          'patientId': widget.patientId,
-          'patientName': patientName, // Include patient's name
-          'testDiastolic': testDiastolic,
-          'testSystolic': testSystolic,
-          'testSymptoms': testSymptoms,
-        }),
-      );
-
-      if (testResponse.statusCode == 201) {
-        Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Test record added successfully for patient: $patientName')),
+      try {
+        final testResponse = await http.post(
+          Uri.parse('https://wecare-p8lx.onrender.com/addPatientTest'),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: jsonEncode({
+            'patientId': widget.patientId,
+            'patientName': patientName,
+            'testDiastolic': testDiastolic,
+            'testSystolic': testSystolic,
+            'testSymptoms': testSymptoms,
+          }),
         );
-      } else {
+
+        if (testResponse.statusCode == 201) {
+          // If the test record was added successfully, show success message
+          Navigator.of(context).pop();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Test record added successfully')),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Failed to add test record')),
+          );
+        }
+      } catch (e) {
+        print('Error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to add test record')),
+          const SnackBar(content: Text('Error occurred while adding test record')),
         );
       }
     } else {
+      // Handle error response from the server when fetching patient details
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to fetch patient information')),
+        const SnackBar(content: Text('Failed to fetch patient details')),
       );
     }
   } catch (e) {
+    // Handle any errors occurred during the HTTP request
     print('Error: $e');
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Error occurred while adding test record')),
+      const SnackBar(content: Text('Error occurred while fetching patient details')),
     );
   }
 }
-
-
 
 
   @override
