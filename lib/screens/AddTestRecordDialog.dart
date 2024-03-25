@@ -23,62 +23,36 @@ class _AddTestRecordDialogState extends State<AddTestRecordDialog> {
   String testSystolic = testSystolicController.text;
   String testSymptoms = testSymptomsController.text;
 
-  // Send request to fetch patient details by ID
+  // Send data to the server to add the test record
   try {
-    final patientResponse = await http.get(
-      Uri.parse('https://wecare-p8lx.onrender.com/patients/${widget.patientId}'),
-      // Add any required headers here
+    final testResponse = await http.post(
+      Uri.parse('https://wecare-p8lx.onrender.com/addPatientTest/${widget.patientId}'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'patientId': widget.patientId,
+        'testDiastolic': testDiastolic,
+        'testSystolic': testSystolic,
+        'testSymptoms': testSymptoms,
+      }),
     );
 
-    if (patientResponse.statusCode == 200) {
-      // Parse the response body to extract patient name
-      Map<String, dynamic> patientData = jsonDecode(patientResponse.body);
-      String patientName = patientData['name']; // Assuming 'name' is the key for patient's name
-
-      // Send data to the server to add the test record
-      try {
-        final testResponse = await http.post(
-          Uri.parse('https://wecare-p8lx.onrender.com/addPatientTest'),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: jsonEncode({
-            'patientId': widget.patientId,
-            'patientName': patientName,
-            'testDiastolic': testDiastolic,
-            'testSystolic': testSystolic,
-            'testSymptoms': testSymptoms,
-          }),
-        );
-
-        if (testResponse.statusCode == 201) {
-          // If the test record was added successfully, show success message
-          Navigator.of(context).pop();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Test record added successfully')),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Failed to add test record')),
-          );
-        }
-      } catch (e) {
-        print('Error: $e');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Error occurred while adding test record')),
-        );
-      }
-    } else {
-      // Handle error response from the server when fetching patient details
+    if (testResponse.statusCode == 201) {
+      // If the test record was added successfully, show success message
+      Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to fetch patient details')),
+        SnackBar(content: Text('Test record added successfully')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to add test record')),
       );
     }
   } catch (e) {
-    // Handle any errors occurred during the HTTP request
     print('Error: $e');
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Error occurred while fetching patient details')),
+      const SnackBar(content: Text('Error occurred while adding test record')),
     );
   }
 }
