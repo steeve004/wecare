@@ -16,10 +16,20 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String? _name;
-  String? _gender;
+  bool _isMale = false; // Variable to track if male is selected
+  bool _isFemale = false; // Variable to track if female is selected
   int? _age;
   String? _diagnosis;
   DateTime? _dateOfBirth;
+
+  void _handleGenderChange(bool? value) {
+    setState(() {
+      if (value != null) {
+        _isMale = value;
+        _isFemale = !value;
+      }
+    });
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -37,36 +47,42 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
   }
 
   Future<void> _submitForm() async {
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      final Map<String, dynamic> data = {
-        'name': _name,
-        'gender': _gender,
-        'age': _age,
-        'diagnosis': _diagnosis,
-      };
+  if (_formKey.currentState!.validate()) {
+    _formKey.currentState!.save();
+    final Map<String, dynamic> data = {
+      'name': _name,
+      'gender': _isMale ? 'Male' : 'Female',
+      'age': _age,
+      'diagnosis': _diagnosis,
+    };
 
-      final response = await http.post(
-        Uri.parse('https://wecare-p8lx.onrender.com/addPatient'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(data),
+    final response = await http.post(
+      Uri.parse('https://wecare-p8lx.onrender.com/addPatient'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+      body: jsonEncode(data),
+    );
+
+    if (response.statusCode == 201) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Patient record added successfully')),
       );
-
-      if (response.statusCode == 201) {
-        // Successful submission
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Patient record added successfully')),
-        );
-      } else {
-        // Error occurred
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to add patient record')),
-        );
-      }
+      // Clear input fields and reset form state
+      _formKey.currentState!.reset();
+      setState(() {
+        _isMale = false;
+        _isFemale = false;
+        _dateOfBirth = null;
+      });
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to add patient record')),
+      );
     }
   }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -163,24 +179,21 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   },
                 ),
                 const SizedBox(height: 16),
-                TextFormField(
-                  decoration: InputDecoration(
-                    labelText: 'Gender',
-                    filled: true,
-                    fillColor: Colors.white,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+                Row(
+                  children: <Widget>[
+                    Radio(
+                      value: true,
+                      groupValue: _isMale,
+                      onChanged: _handleGenderChange,
                     ),
-                  ),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Please enter patient gender';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) {
-                    _gender = value;
-                  },
+                    const Text('Male'),
+                    Radio(
+                      value: false,
+                      groupValue: _isFemale,
+                      onChanged: _handleGenderChange,
+                    ),
+                    const Text('Female'),
+                  ],
                 ),
                 const SizedBox(height: 16),
                 TextFormField(

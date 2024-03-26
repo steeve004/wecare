@@ -50,13 +50,13 @@ Future<void> deletePatient(String id) async {
             onPressed: () {
               Navigator.of(context).pop(false); // Return false if user cancels
             },
-            child: Text('Cancel', style: TextStyle(color: Colors.blue)), // Cancel button text color
+            child: const Text('Cancel', style: TextStyle(color: Colors.blue)), // Cancel button text color
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(true); // Return true if user confirms
             },
-            child: Text('Delete', style: TextStyle(color: Colors.red)), // Delete button text color
+            child: const Text('Delete', style: TextStyle(color: Colors.red)), // Delete button text color
           ),
         ],
       );

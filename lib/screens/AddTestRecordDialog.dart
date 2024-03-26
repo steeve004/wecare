@@ -42,7 +42,7 @@ class _AddTestRecordDialogState extends State<AddTestRecordDialog> {
       // If the test record was added successfully, show success message
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Test record added successfully')),
+        const SnackBar(content: Text('Test record added successfully')),
       );
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -62,7 +62,7 @@ class _AddTestRecordDialogState extends State<AddTestRecordDialog> {
 Widget build(BuildContext context) {
   return AlertDialog(
     backgroundColor: Colors.white,
-    title: Text('Add Test Record'),
+    title: const Text('Add Test Record'),
     content: Container(
      // color: Colors.white,
       child: SingleChildScrollView(
