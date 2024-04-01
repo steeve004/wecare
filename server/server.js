@@ -41,6 +41,11 @@ app.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
+    // Check if username is provided
+    if (!username) {
+      return res.status(400).json({ error: 'Username is required' });
+    }
+
     // Create a new user document
     const newUser = new User({
       username,
@@ -57,6 +62,7 @@ app.post('/register', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
 
 
 
