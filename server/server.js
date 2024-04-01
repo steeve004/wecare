@@ -33,17 +33,13 @@ const userSchema = new mongoose.Schema({
   password: String
 });
 
-// Define MongoDB Model for user signup
-const User = mongoose.model('User', userSchema);
-
-// Endpoint to register a new user
 app.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    // Check if username is provided
-    if (!username) {
-      return res.status(400).json({ error: 'Username is required' });
+    // Check if username, email, and password are provided
+    if (!username || !email || !password) {
+      return res.status(400).json({ error: 'Username, email, and password are required' });
     }
 
     // Create a new user document
@@ -62,7 +58,6 @@ app.post('/register', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-
 
 
 

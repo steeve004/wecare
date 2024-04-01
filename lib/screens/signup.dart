@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:icons_plus/icons_plus.dart';
+import 'package:http/http.dart' as http;
 import 'package:wecare/screens/signin.dart';
 import 'package:wecare/widgets/custome_scaffold.dart';
-import 'package:http/http.dart' as http;
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -205,8 +204,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             if (_formSignupKey.currentState!.validate() &&
                                 agreePersonalData) {
                               final response = await http.post(
-                                Uri.parse(
-                                    'https://wecare-p8lx.onrender.com/register'),
+                                Uri.parse('https://wecare-p8lx.onrender.com/register'), // Change this to your API URL
                                 body: {
                                   'username': _fullNameController.text,
                                   'email': _emailController.text,
@@ -276,10 +274,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          Logo(Logos.facebook_f),
-                          Logo(Logos.twitter),
-                          Logo(Logos.google),
-                          Logo(Logos.apple),
+                          // Add your social login buttons here
                         ],
                       ),
                       const SizedBox(
