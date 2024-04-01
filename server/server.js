@@ -26,38 +26,46 @@ mongoose.connect('mongodb+srv://Steeve:1234@cluster2.ql5jvik.mongodb.net/',
 
 
 
-// Define MongoDB Schema for user signup
-const userSchema = new mongoose.Schema({
-  username: { type: String, unique: true },
-  email: { type: String, unique: true },
-  password: String
-});
-
-app.post('/register', async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-
-    // Check if username, email, and password are provided
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: 'Username, email, and password are required' });
+  const userSchema = new Schema({
+    username: { type: String, required: true },
+    email: { type: String, required: true },
+    password: { type: String, required: true }
+  });
+  
+  const User = mongoose.model('User', userSchema);
+  
+  app.post('/register', async (req, res) => {
+    try {
+      const { username, email, password } = req.body;
+  
+      // Check if username, email, and password are provided
+      if (!username || !email || !password) {
+        return res.status(400).json({ error: 'Username, email, and password are required' });
+      }
+  
+      // Check if user with the same email already exists
+      const existingUser = await User.findOne({ email: email });
+      if (existingUser) {
+        return res.status(400).json({ error: 'Email already exists' });
+      }
+  
+      // Create a new user document
+      const newUser = new User({
+        username,
+        email,
+        password
+      });
+  
+      // Save user record to the database
+      await newUser.save();
+  
+      res.status(201).json({ message: 'User registered successfully' });
+    } catch (error) {
+      console.error('Error registering user:', error);
+      res.status(500).json({ error: 'Internal server error' });
     }
+  });
 
-    // Create a new user document
-    const newUser = new User({
-      username,
-      email,
-      password
-    });
-
-    // Save user record to the database
-    await newUser.save();
-
-    res.status(201).json({ message: 'User registered successfully' });
-  } catch (error) {
-    console.error('Error registering user:', error);
-    res.status(500).json({ error: 'Internal server error' });
-  }
-});
 
 
 
