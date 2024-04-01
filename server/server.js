@@ -1,6 +1,8 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+
 
 // Initialize Express app
 const app = express();
@@ -19,10 +21,6 @@ mongoose.connect('mongodb+srv://Steeve:1234@cluster2.ql5jvik.mongodb.net/',
   { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
-
-
-
-
 
 
 
@@ -62,6 +60,41 @@ mongoose.connect('mongodb+srv://Steeve:1234@cluster2.ql5jvik.mongodb.net/',
       res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
       console.error('Error registering user:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  });
+
+
+  
+
+  app.post('/signin', async (req, res) => {
+    try {
+      const { email, password } = req.body;
+  
+      // Check if email and password are provided
+      if (!email || !password) {
+        return res.status(400).json({ error: 'Email and password are required' });
+      }
+  
+      // Find user by email
+      const user = await User.findOne({ email });
+  
+      // Check if user exists
+      if (!user) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+  
+      // Compare passwords
+      const passwordMatch = await bcrypt.compare(password, user.password);
+  
+      if (!passwordMatch) {
+        return res.status(401).json({ error: 'Invalid credentials' });
+      }
+  
+      // Passwords match, sign in successful
+      res.status(200).json({ message: 'Sign in successful' });
+    } catch (error) {
+      console.error('Error signing in:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
   });
