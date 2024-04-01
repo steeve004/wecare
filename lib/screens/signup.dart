@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:icons_plus/icons_plus.dart';
 import 'package:wecare/screens/signin.dart';
 import 'package:wecare/widgets/custome_scaffold.dart';
-//import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -58,13 +58,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
               ),
               child: SingleChildScrollView(
-                // get started form
                 child: Form(
                   key: _formSignupKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      // get started text
                       const Text(
                         'Get Started',
                         style: TextStyle(
@@ -76,7 +74,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 40.0,
                       ),
-                      // full name
                       TextFormField(
                         controller: _fullNameController,
                         validator: (value) {
@@ -93,13 +90,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.green, // Default border color
+                              color: Colors.green,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.green, // Default border color
+                              color: Colors.green,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -108,7 +105,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // email
                       TextFormField(
                         controller: _emailController,
                         validator: (value) {
@@ -125,13 +121,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.green, // Default border color
+                              color: Colors.green,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.green, // Default border color
+                              color: Colors.green,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -140,7 +136,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // password
                       TextFormField(
                         controller: _passwordController,
                         obscureText: true,
@@ -159,13 +154,13 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           border: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.green, // Default border color
+                              color: Colors.green,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderSide: const BorderSide(
-                              color: Colors.green, // Default border color
+                              color: Colors.green,
                             ),
                             borderRadius: BorderRadius.circular(10),
                           ),
@@ -174,7 +169,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // i agree to the processing
                       Row(
                         children: [
                           Checkbox(
@@ -204,18 +198,35 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // signup button
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: () {
-                            if (_formSignupKey.currentState!.validate() && agreePersonalData) {
-                              // Perform signup action
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Sign Up Successful'),
-                                ),
+                          onPressed: () async {
+                            if (_formSignupKey.currentState!.validate() &&
+                                agreePersonalData) {
+                              final response = await http.post(
+                                Uri.parse(
+                                    'https://wecare-p8lx.onrender.com/register'),
+                                body: {
+                                  'username': _fullNameController.text,
+                                  'email': _emailController.text,
+                                  'password': _passwordController.text,
+                                },
                               );
+
+                              if (response.statusCode == 201) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Sign Up Successful'),
+                                  ),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text('Sign Up Failed'),
+                                  ),
+                                );
+                              }
                             } else if (!agreePersonalData) {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 const SnackBar(
@@ -230,7 +241,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                       ),
                       const SizedBox(height: 20.0),
-                      // sign up divider
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -263,7 +273,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 30.0,
                       ),
-                      // sign up social media logo
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
@@ -276,7 +285,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       const SizedBox(
                         height: 25.0,
                       ),
-                      // already have an account
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [

@@ -15,10 +15,57 @@ app.use((req, res, next) => {
 });
 
 // MongoDB connection
-mongoose.connect('mongodb+srv://Steeve:1234@cluster2.ql5jvik.mongodb.net/', 
-{ useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect('mongodb+srv://Steeve:1234@cluster2.ql5jvik.mongodb.net/',
+  { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('Connected to MongoDB'))
   .catch(err => console.error('Error connecting to MongoDB:', err));
+
+
+
+
+
+
+
+// Define MongoDB Schema for user signup
+const userSchema = new mongoose.Schema({
+  username: { type: String, unique: true },
+  email: { type: String, unique: true },
+  password: String
+});
+
+// Define MongoDB Model for user signup
+const User = mongoose.model('User', userSchema);
+
+// Endpoint to register a new user
+app.post('/register', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    // Create a new user document
+    const newUser = new User({
+      username,
+      email,
+      password
+    });
+
+    // Save user record to the database
+    await newUser.save();
+
+    res.status(201).json({ message: 'User registered successfully' });
+  } catch (error) {
+    console.error('Error registering user:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+
+
 
 // Define MongoDB Schema
 const patientSchema = new mongoose.Schema({
@@ -35,7 +82,7 @@ const Patient = mongoose.model('Patient', patientSchema);
 app.post('/addPatient', async (req, res) => {
   try {
     const { name, gender, age, diagnosis } = req.body;
-    
+
     // Create a new patient document
     const newPatient = new Patient({
       name,
@@ -59,7 +106,7 @@ app.get('/patients', async (req, res) => {
   try {
     // Fetch all patient records from the database
     const patients = await Patient.find();
-    
+
     res.status(200).json(patients);
   } catch (error) {
     console.error('Error fetching patient details:', error);
@@ -156,7 +203,7 @@ app.get('/patientTests/:patientId', async (req, res) => {
     const patientId = req.params.patientId;
 
     // Fetch all patient test records for a specific patient from the database
-    const patientTests = await PatientTest.find({ patientId }) .populate('patientId', 'name');
+    const patientTests = await PatientTest.find({ patientId }).populate('patientId', 'name');
 
     res.status(200).json(patientTests);
   } catch (error) {
