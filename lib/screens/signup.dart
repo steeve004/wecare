@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:wecare/screens/signin.dart';
@@ -205,11 +207,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 agreePersonalData) {
                               final response = await http.post(
                                 Uri.parse('https://wecare-p8lx.onrender.com/register'), // Change this to your API URL
-                                body: {
+                                headers: <String, String>{
+                                  'Content-Type': 'application/json; charset=UTF-8',
+                                },
+                                body: jsonEncode(<String, String>{
                                   'username': _fullNameController.text,
                                   'email': _emailController.text,
                                   'password': _passwordController.text,
-                                },
+                                }),
                               );
 
                               if (response.statusCode == 201) {
