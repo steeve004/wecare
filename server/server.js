@@ -39,6 +39,9 @@ const User = mongoose.model('User', userSchema);
 // Endpoint to register a new user
 app.post('/register', async (req, res) => {
   try {
+    // Log the request body to the console
+    console.log('Request Body:', req.body);
+
     const { username, email, password } = req.body;
 
     // Create a new user document
