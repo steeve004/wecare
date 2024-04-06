@@ -1,10 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:icons_plus/icons_plus.dart';
 import 'package:wecare/screens/signup.dart';
 import 'package:wecare/screens/addpatient.dart';
 import 'package:wecare/widgets/custome_scaffold.dart';
-
 
 class SignInScreen extends StatefulWidget {
   const SignInScreen({Key? key}) : super(key: key);
@@ -14,85 +12,9 @@ class SignInScreen extends StatefulWidget {
 }
 
 class _SignInScreenState extends State<SignInScreen> {
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final GlobalKey<FormState> _formSignInKey = GlobalKey<FormState>();
+  final _formSignInKey = GlobalKey<FormState>();
 
   bool rememberPassword = true;
-
-  Future<void> signIn() async {
-    final String email = emailController.text;
-    final String password = passwordController.text;
-
-    try {
-      final response = await http.post(
-        Uri.parse('http://your-backend-url.com/signin'), // Replace with your backend URL
-        headers: <String, String>{
-          'Content-Type': 'application/json',
-        },
-        body: jsonEncode(<String, String>{
-          'email': email,
-          'password': password,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        // Sign in successful
-        final Map<String, dynamic> data = jsonDecode(response.body);
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text('Success'),
-            content: Text(data['message']),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  // You might want to navigate to another page here
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      } else {
-        // Sign in failed
-        final Map<String, dynamic> errorData = jsonDecode(response.body);
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: Text('Error'),
-            content: Text(errorData['error']),
-            actions: <Widget>[
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('OK'),
-              ),
-            ],
-          ),
-        );
-      }
-    } catch (error) {
-      print('Error signing in: $error');
-      showDialog(
-        context: context,
-        builder: (_) => AlertDialog(
-          title: Text('Error'),
-          content: Text('Internal server error. Please try again later.'),
-          actions: <Widget>[
-            TextButton(
-              onPressed: () {
-                Navigator.pop(context);
-              },
-              child: Text('OK'),
-            ),
-          ],
-        ),
-      );
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -121,7 +43,7 @@ class _SignInScreenState extends State<SignInScreen> {
                   key: _formSignInKey,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
+                    children:[
                       const Text(
                         'Welcome Back',
                         style: TextStyle(
@@ -130,17 +52,17 @@ class _SignInScreenState extends State<SignInScreen> {
                           color: Colors.green,
                         ),
                       ),
+
                       const SizedBox(height: 10,),
                       TextFormField(
-                        controller: emailController,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Username';
+                        validator: (value){
+                          if (value == null || value.isEmpty){
+                            return ' Please enter Username';
                           }
                           return null;
                         },
                         decoration: InputDecoration(
-                          labelText: 'Username',
+                          label: const Text('Username'),
                           hintText: 'Enter Username',
                           hintStyle: const TextStyle(
                             color: Colors.black26,
@@ -159,19 +81,19 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ),
                       ),
+
                       const SizedBox(height: 10,),
                       TextFormField(
-                        controller: passwordController,
                         obscureText: true,
                         obscuringCharacter: '*',
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter Password';
+                        validator: (value){
+                          if (value == null || value.isEmpty){
+                            return ' Please enter Password';
                           }
                           return null;
                         },
                         decoration: InputDecoration(
-                          labelText: 'Password',
+                          label: const Text('Password'),
                           hintText: 'Enter Password',
                           hintStyle: const TextStyle(
                             color: Colors.black26,
@@ -191,13 +113,14 @@ class _SignInScreenState extends State<SignInScreen> {
                         ),
                       ),
                       const SizedBox(height: 10,),
+
                       Row(
                         children: [
                           Checkbox(
                             value: rememberPassword,
                             onChanged: (bool? value) {
                               setState(() {
-                                rememberPassword = value ?? false;
+                                rememberPassword = value!;
                               });
                             },
                           ),
@@ -207,7 +130,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               color: Colors.black45,
                             ),
                           ),
-                          const SizedBox(width: 60),
+                          const SizedBox(width: 60), // Add spacing between Remember me and Forget Password
                           GestureDetector(
                             onTap: () {
                               // Implement your Forget Password logic here
@@ -223,14 +146,36 @@ class _SignInScreenState extends State<SignInScreen> {
                         ],
                       ),
                       const SizedBox(height: 10,),
+
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
-                          onPressed: signIn,
+                          onPressed: (){ 
+                            if (_formSignInKey.currentState!.validate()&& rememberPassword){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Processing Data'),
+                                ),
+                              );
+                              Navigator.push(context,
+                                MaterialPageRoute(builder: (e)=> const AddPatientScreen(),
+                                ),
+                              );
+                            } else if (!rememberPassword){
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Please agree"),
+
+                                  )
+                              );
+                            }
+                          },
                           child: const Text('Sign In'),
                         ),
                       ),
+
                       const SizedBox(height: 10,),
+
                       const Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -245,8 +190,7 @@ class _SignInScreenState extends State<SignInScreen> {
                               vertical: 0,
                               horizontal: 10,
                             ),
-                            child: Text(
-                              'Sign Up  With',
+                            child: Text('Sign Up  With',
                               style: TextStyle(
                                 color: Colors.black45,
                               ),
@@ -260,44 +204,48 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                         ],
                       ),
+
                       const SizedBox(height: 10,),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: [
-                          // Add your social login buttons here
+                          Logo(Logos.facebook_f),
+                          Logo(Logos.twitter),
+                          Logo(Logos.google),
+                          Logo(Logos.apple),
+
                         ],
                       ),
+
                       const SizedBox(height: 10,),
+
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Text(
-                            'Don\'t have an account yet? ',
+                          const Text('Dont have an account yet? ',
                             style: TextStyle(
                               color: Colors.black45,
                             ),
                           ),
                           GestureDetector(
                             onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => const SignUpScreen(),
+                              Navigator.push(context,
+                                MaterialPageRoute(builder: (e)=> const SignUpScreen(),
                                 ),
                               );
                             },
                             child: const Text('Sign Up'),
                           )
                         ],
-                      ),
+                      ) 
                     ],
-                  ),
-                ),
+                  ),),
               ),
             ),
           ),
         ],
-      ),
+      )
     );
   }
 }

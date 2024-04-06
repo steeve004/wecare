@@ -201,7 +201,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       ),
                       SizedBox(
                         width: double.infinity,
-                        child: ElevatedButton(
+                        child: ElevatedButton(  //button starts here
                           onPressed: () async {
                             if (_formSignupKey.currentState!.validate() &&
                                 agreePersonalData) {
@@ -223,6 +223,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     content: Text('Sign Up Successful'),
                                   ),
                                 );
+
+                                //Clear text fields after successful sign up
+                                _fullNameController.clear();
+                                _emailController.clear();
+                                _passwordController.clear();
+
                               } else {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   const SnackBar(
