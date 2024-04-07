@@ -3,8 +3,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'viewpatients.dart';
 
-import 'package:wecare/screens/addpatient.dart';
-
 class AddTestsScreen extends StatefulWidget {
   const AddTestsScreen({Key? key}) : super(key: key);
 
@@ -13,8 +11,8 @@ class AddTestsScreen extends StatefulWidget {
 }
 
 class _AddTestsScreenState extends State<AddTestsScreen> {
-  List<String> patientNames = []; // List to store patient names
-  String? selectedPatient; // Currently selected patient
+  List<String> patientNames = [];
+  String? selectedPatient;
   TextEditingController diastolicController = TextEditingController();
   TextEditingController systolicController = TextEditingController();
   TextEditingController symptomsController = TextEditingController();
@@ -22,12 +20,11 @@ class _AddTestsScreenState extends State<AddTestsScreen> {
   @override
   void initState() {
     super.initState();
-    fetchPatients(); // Fetch patients when the screen initializes
+    fetchPatients();
   }
 
-  // Function to fetch patients from the server
   void fetchPatients() async {
-    final response = await http.get(Uri.parse('https://wecare-p8lx.onrender.com/patients'));
+    final response = await http.get(Uri.parse('http://localhost:8000/patients'));
     if (response.statusCode == 200) {
       final List<dynamic> data = jsonDecode(response.body);
       setState(() {
@@ -37,6 +34,55 @@ class _AddTestsScreenState extends State<AddTestsScreen> {
       throw Exception('Failed to load patients');
     }
   }
+
+ void _submitForm() async {
+  // Retrieve form data
+  String testDiastolic = diastolicController.text;
+  String testSystolic = systolicController.text;
+  String testSymptoms = symptomsController.text;
+
+  // Check if a patient is selected
+  if (selectedPatient == null) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Please select a patient')),
+    );
+    return;
+  }
+
+  // Send data to the server to add the test record
+  try {
+    final testResponse = await http.post(
+      Uri.parse('https://localhost:8000/addPatientTest/$selectedPatient'),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: jsonEncode({
+        'patientId': selectedPatient,
+        'testDiastolic': testDiastolic,
+        'testSystolic': testSystolic,
+        'testSymptoms': testSymptoms,
+      }),
+    );
+
+    if (testResponse.statusCode == 201) {
+      // If the test record was added successfully, show success message
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Test record added successfully')),
+      );
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Failed to add test record')),
+      );
+    }
+  } catch (e) {
+    print('Error: $e');
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Error occurred while adding test record')),
+    );
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -54,8 +100,8 @@ class _AddTestsScreenState extends State<AddTestsScreen> {
       body: Container(
         decoration: const BoxDecoration(
           image: DecorationImage(
-            image: AssetImage("assets/images/bck5.png"), // Replace with your image path
-            fit: BoxFit.fill, // Fill the screen with the image
+            image: AssetImage("assets/images/bck5.png"),
+            fit: BoxFit.fill,
           ),
         ),
         child: Padding(
@@ -71,12 +117,12 @@ class _AddTestsScreenState extends State<AddTestsScreen> {
                 ),
               ),
               const SizedBox(height: 10),
-             DropdownButton<String>(
+              DropdownButton<String>(
                 value: selectedPatient,
                 hint: const Row(
                   children: [
-                    Icon(Icons.person), // Add an icon to represent the patient
-                    SizedBox(width: 8), // Add some spacing between the icon and text
+                    Icon(Icons.person),
+                    SizedBox(width: 8),
                     Text('Select a patient'),
                   ],
                 ),
@@ -85,21 +131,20 @@ class _AddTestsScreenState extends State<AddTestsScreen> {
                     selectedPatient = value;
                   });
                 },
-                dropdownColor: Colors.white, // Set the dropdown background color to white
+                dropdownColor: Colors.white,
                 items: patientNames.map<DropdownMenuItem<String>>((String value) {
                   return DropdownMenuItem<String>(
                     value: value,
                     child: Row(
                       children: [
-                        Icon(Icons.person), // Add an icon to represent the patient
-                        const SizedBox(width: 8), // Add some spacing between the icon and text
+                        Icon(Icons.person),
+                        const SizedBox(width: 8),
                         Text(value),
                       ],
                     ),
                   );
                 }).toList(),
               ),
-
               const SizedBox(height: 20),
               TextField(
                 controller: diastolicController,
@@ -125,27 +170,20 @@ class _AddTestsScreenState extends State<AddTestsScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  // Perform action with selected patient and form inputs
-                  if (selectedPatient != null) {
-                    String diastolic = diastolicController.text;
-                    String systolic = systolicController.text;
-                    String symptoms = symptomsController.text;
-                    // Handle submission, e.g., send data to server
-                  } else {
-                    // Show error message or handle the case when no patient is selected
-                  }
-                },
+                onPressed: _submitForm, // Changed from submitTest to _submitForm
                 style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all<Color>(const Color.fromARGB(255, 84, 117, 84)), // Green button
+                  backgroundColor: MaterialStateProperty.all<Color>(
+                    const Color.fromARGB(255, 84, 117, 84),
+                  ),
                 ),
                 child: const Text(
                   'Submit',
                   style: TextStyle(
-                    color: Colors.white, // White text
+                    color: Colors.white,
                   ),
                 ),
               ),
+
             ],
           ),
         ),

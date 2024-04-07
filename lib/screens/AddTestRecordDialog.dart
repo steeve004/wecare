@@ -26,7 +26,7 @@ class _AddTestRecordDialogState extends State<AddTestRecordDialog> {
   // Send data to the server to add the test record
   try {
     final testResponse = await http.post(
-      Uri.parse('https://wecare-p8lx.onrender.com/addPatientTest/${widget.patientId}'),
+      Uri.parse('http://localhost:8000/addPatientTest/${widget.patientId}'),
       headers: {
         'Content-Type': 'application/json',
       },
