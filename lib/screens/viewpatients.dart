@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:wecare/screens/WelcomeScreen.dart';
 import 'package:wecare/screens/addpatient.dart';
 import 'dart:convert';
 import 'EditPatientScreen.dart';
@@ -25,7 +26,7 @@ class _ViewPatientsScreenState extends State<ViewPatientsScreen> {
 
   // Function to fetch patients from the server
   Future<void> fetchPatients() async {
-    final response = await http.get(Uri.parse('https://wecare-p8lx.onrender.com/patients'));
+    final response = await http.get(Uri.parse('http://localhost:8000/patients'));
     if (response.statusCode == 200) {
       setState(() {
         patients = json.decode(response.body); // Decode JSON response
@@ -66,7 +67,7 @@ Future<void> deletePatient(String id) async {
   // If user confirms deletion, proceed with deletion
   if (confirmDelete == true) {
     final response = await http.delete(
-      Uri.parse('https://wecare-p8lx.onrender.com/patients/$id'),
+      Uri.parse('http://localhost:8000/patients/$id'),
     );
     if (response.statusCode == 200) {
       setState(() {
@@ -88,7 +89,7 @@ Future<void> deletePatient(String id) async {
   // Function to update patient details
   Future<void> updatePatient(String id, dynamic updatedPatient) async {
     final response = await http.put(
-      Uri.parse('https://wecare-p8lx.onrender.com/patients/$id'),
+      Uri.parse('http://localhost:8000/patients/$id'),
       body: json.encode(updatedPatient),
       headers: {'Content-Type': 'application/json'},
     );
@@ -131,7 +132,11 @@ Future<void> deletePatient(String id) async {
                   context,
                   MaterialPageRoute(builder: (context) => const AddPatientScreen()),
                 );
-              } else if (value == 'addTest') {
+              } else if (value == 'home') {
+                // Navigate to add test screen
+                Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));
+              } 
+              else if (value == 'addTest') {
                 // Navigate to add test screen
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AddTestsScreen()));
               } else if (value == 'viewAllTests') {
@@ -145,6 +150,10 @@ Future<void> deletePatient(String id) async {
               const PopupMenuItem<String>(
                 value: 'viewPatients',
                 child: Text('Add Patients'),
+              ),
+               const PopupMenuItem<String>(
+                value: 'home',
+                child: Text('Home'),
               ),
               const PopupMenuItem<String>(
                 value: 'addTest',
@@ -229,42 +238,42 @@ class _AnimatedPatientCardState extends State<AnimatedPatientCard> with SingleTi
   }
 
   @override
-  Widget build(BuildContext context) {
-    return AnimatedBuilder(
-      animation: _animation,
-      builder: (context, child) {
-        return Transform.translate(
-          offset: Offset(0.0, 100 * (1 - _animation.value)),
-          child: Opacity(
-            opacity: _animation.value,
-            child: Card(
-              color: const Color.fromARGB(255, 7, 85, 12), // Dark green color
-              child: ListTile(
-                title: Text(
-                  widget.patient['name'],
-                  style: const TextStyle(color: Colors.white), // White text color
-                ),
-                subtitle: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Text(
-                      "Age: ${widget.patient['age']}",
-                      style: const TextStyle(color: Colors.white), // White text color
-                    ),
-                    Text(
-                      "Gender: ${widget.patient['gender']}",
-                      style: const TextStyle(color: Colors.white), // White text color
-                    ),
-                    Text(
-                      "Diagnosis: ${widget.patient['diagnosis']}",
-                      style: const TextStyle(color: Colors.white), // White text color
-                    ),
-                  ],
-                ),
-                trailing: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    IconButton(
+Widget build(BuildContext context) {
+  return AnimatedBuilder(
+    animation: _animation,
+    builder: (context, child) {
+      return Transform.translate(
+        offset: Offset(0.0, 100 * (1 - _animation.value)),
+        child: Opacity(
+          opacity: 0.9, // Adjust opacity value as needed (0.0 to 1.0)
+          child: Card(
+            color: const Color.fromARGB(255, 7, 85, 12), // Dark green color
+            child: ListTile(
+              title: Text(
+                "Name: ${widget.patient['name']}",
+                style: const TextStyle(color: Colors.white), // White text color
+              ),
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Text(
+                    "Age: ${widget.patient['age']}",
+                    style: const TextStyle(color: Colors.white), // White text color
+                  ),
+                  Text(
+                    "Gender: ${widget.patient['gender']}",
+                    style: const TextStyle(color: Colors.white), // White text color
+                  ),
+                  Text(
+                    "Diagnosis: ${widget.patient['diagnosis']}",
+                    style: const TextStyle(color: Colors.white), // White text color
+                  ),
+                ],
+              ),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
                     icon: const Icon(Icons.note, color: Colors.white),
                     onPressed: () {
                       showDialog(
@@ -275,10 +284,10 @@ class _AnimatedPatientCardState extends State<AnimatedPatientCard> with SingleTi
                       );
                     },
                   ),
-                    IconButton(
-                      icon: const Icon(Icons.edit, color: Colors.white),
-                      onPressed: () {
-                       showDialog(
+                  IconButton(
+                    icon: const Icon(Icons.edit, color: Colors.white),
+                    onPressed: () {
+                      showDialog(
                         context: context,
                         builder: (BuildContext context) {
                           return AlertDialog(
@@ -294,7 +303,8 @@ class _AnimatedPatientCardState extends State<AnimatedPatientCard> with SingleTi
                                   ),
                                 ),
                                 const SizedBox(height: 80), // Add some space between the content and the logo
-                                Image.asset('assets/images/bck3.png', // Provide the path to your logo image asset
+                                Image.asset(
+                                  'assets/images/bck3.png', // Provide the path to your logo image asset
                                   height: 150, // Adjust the height as needed
                                 ),
                               ],
@@ -302,21 +312,21 @@ class _AnimatedPatientCardState extends State<AnimatedPatientCard> with SingleTi
                           );
                         },
                       );
-                      },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete, color: Colors.white),
-                        onPressed: () {
-                          widget.onDelete(widget.patient['_id']);
-                        },
-                            ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        }
-                      }
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.white),
+                    onPressed: () {
+                      widget.onDelete(widget.patient['_id']);
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+}
