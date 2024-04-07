@@ -60,16 +60,15 @@ class Test {
   }
 }
 
-
 class ViewAllTestsScreen extends StatefulWidget {
-  const ViewAllTestsScreen({super.key});
+  const ViewAllTestsScreen({Key? key}) : super(key: key);
 
   @override
   _ViewAllTestsScreenState createState() => _ViewAllTestsScreenState();
 }
 
 class _ViewAllTestsScreenState extends State<ViewAllTestsScreen> {
-   @override
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Patient Records',
@@ -87,7 +86,7 @@ class PatientList extends StatefulWidget {
 }
 
 class _PatientListState extends State<PatientList> {
-  late List<Patient> patients;
+  late List<Patient> patients = [];
   late List<Test> tests = []; // Initialize with an empty list
 
   @override
@@ -145,10 +144,11 @@ class _PatientListState extends State<PatientList> {
         leading: IconButton(
           icon: Icon(Icons.arrow_back),
           onPressed: () {
-            Navigator.push( context,
-             MaterialPageRoute(builder: (context) => WelcomeScreen()),
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => WelcomeScreen()),
             );
-              // Simply pop back to the previous screen
+            // Simply pop back to the previous screen
           },
         ),
       ),
@@ -162,13 +162,23 @@ class _PatientListState extends State<PatientList> {
                 return Card(
                   color: const Color.fromARGB(255, 8, 37, 9), // Set card background color to green
                   child: ListTile(
-                    title: Text(
-                      patient.name,
-                      style: TextStyle(color: Colors.white), // Set text color to white
+                    title: Center(
+                      child: Text(
+                        'Patient',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18, // Adjust font size as needed
+                          fontWeight: FontWeight.bold, // Apply bold font weight
+                        ),
+                      ),
                     ),
                     subtitle: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
+                        Text(
+                          'Name: ${patient.name}',
+                          style: TextStyle(color: Colors.white), // Set text color to white
+                        ),
                         Text(
                           'Gender: ${patient.gender}',
                           style: TextStyle(color: Colors.white), // Set text color to white

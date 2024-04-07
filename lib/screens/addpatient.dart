@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:wecare/screens/WelcomeScreen.dart';
+import 'package:wecare/screens/login.dart';
 import 'viewpatients.dart';
 import 'addtest.dart';
 import 'viewalltest.dart';
@@ -57,7 +59,7 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
     };
 
     final response = await http.post(
-      Uri.parse('https://wecare-p8lx.onrender.com/addPatient'),
+      Uri.parse('http://localhost:8000/addPatient'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -114,7 +116,12 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
                   context,
                   MaterialPageRoute(builder: (context) => const ViewPatientsScreen()),
                 );
-              } else if (value == 'addTest') {
+              }
+              else if (value == 'home') {
+                // Navigate to add test screen
+                Navigator.push(context, MaterialPageRoute(builder: (context) => WelcomeScreen()));
+              } 
+              else if (value == 'addTest') {
                 // Navigate to add test screen
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const AddTestsScreen()));
               } else if (value == 'viewAllTests') {
@@ -128,6 +135,10 @@ class _AddPatientScreenState extends State<AddPatientScreen> {
               const PopupMenuItem<String>(
                 value: 'viewPatients',
                 child: Text('View Patients'),
+              ),
+              const PopupMenuItem<String>(
+                value: 'home',
+                child: Text('Home'),
               ),
               const PopupMenuItem<String>(
                 value: 'addTest',

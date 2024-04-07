@@ -1,7 +1,10 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-//const bcrypt = require('bcrypt');
+const bcrypt = require('bcrypt');
+//const PatientTest = require('../models/PatientTest'); // Import your PatientTest model
+const router = express.Router();
+
 
 
 // Initialize Express app
@@ -24,7 +27,7 @@ mongoose.connect('mongodb+srv://Steeve:1234@cluster2.ql5jvik.mongodb.net/',
 
 
 
-  const userSchema = new mongoose.Schema({
+  /* const userSchema = new mongoose.Schema({
     username: { type: String, required: true },
     email: { type: String, required: true },
     password: { type: String, required: true }
@@ -97,7 +100,7 @@ mongoose.connect('mongodb+srv://Steeve:1234@cluster2.ql5jvik.mongodb.net/',
       console.error('Error signing in:', error);
       res.status(500).json({ error: 'Internal server error' });
     }
-  });
+  }); */
 
 
 
@@ -238,9 +241,25 @@ app.post('/addPatientTest/:patientId', async (req, res) => {
   }
 });
 
-
-// Endpoint to get patient test records by patient ID
+// Endpoint to fetch tests for a specific patient
 app.get('/patientTests/:patientId', async (req, res) => {
+  const { patientId } = req.params;
+  try {
+    const tests = await PatientTest.find({ patientId });
+    res.json(tests);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+
+
+
+
+
+/* //Endpoint to get patient test records by patient ID
+router.get('patientTests/:patientId', async (req, res) => {
   try {
     const patientId = req.params.patientId;
 
@@ -250,6 +269,108 @@ app.get('/patientTests/:patientId', async (req, res) => {
     res.status(200).json(patientTests);
   } catch (error) {
     console.error('Error fetching patient test records:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+module.exports = router;
+ */
+// Endpoint to get patient test records by patient ID
+/* app.get('/patientTests/:patientId', async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+
+    // Fetch all patient test records for a specific patient from the database
+    const patientTests = await PatientTest.find({ patientId }).populate('patientId', 'name');
+
+    res.status(200).json(patientTests);
+  } catch (error) {
+    console.error('Error fetching patient test records:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}); */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Define workers schema
+const workerSchema = new mongoose.Schema({
+  firstName: { type: String, required: true },
+  lastName: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
+  password: { type: String, required: true },
+});
+
+const Worker = mongoose.model('Worker', workerSchema);
+
+// Registration endpoint
+app.post('/register', async (req, res) => {
+  try {
+    const { firstName, lastName, email, password } = req.body;
+
+    // Check if email is already registered
+    const existingWorker = await Worker.findOne({ email });
+    if (existingWorker) {
+      return res.status(400).json({ error: 'Email is already registered' });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new worker
+    const newWorker = new Worker({
+      firstName,
+      lastName,
+      email,
+      password: hashedPassword,
+    });
+
+    // Save the worker to the database
+    await newWorker.save();
+
+    res.status(201).json({ message: 'Registration successful' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+
+app.post('/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Find the worker by email
+    const worker = await Worker.findOne({ email });
+
+    if (!worker) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    // Compare passwords
+    const isPasswordMatch = await bcrypt.compare(password, worker.password);
+
+    if (!isPasswordMatch) {
+      return res.status(401).json({ error: 'Incorrect password' });
+    }
+
+    // If login successful, return success message
+    res.status(200).json({ message: 'Login successful' });
+  } catch (error) {
+    console.error(error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

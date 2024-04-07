@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:wecare/screens/welcome.dart';
+import 'package:wecare/screens/login.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
         ),
         useMaterial3: true,
       ),
-      home: const WelcomeScreen(),
+      home: LoginScreen(),
     );
   }
 }
